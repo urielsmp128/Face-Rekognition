@@ -1,0 +1,26 @@
+version: "3.4"
+
+services:
+  api:
+    build: .
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app-http.rule=Host(`api.photos.copasrc.com`)
+      - traefik.http.routers.app-http.tls=true
+      - traefik.http.routers.app-http.tls.certresolver=letsencrypt
+
+  traefik:
+    image: traefik:v2.3
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+      - traefik-public-certificates:/certificates
+
+volumes:
+  traefik-public-certificates:
+  
